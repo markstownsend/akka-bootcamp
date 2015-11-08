@@ -22,15 +22,13 @@ let printInstructions () =
 let main argv = 
     // initialize an actor system
     let myActorSystem = System.create "MyActorSystem" (Configuration.defaultConfig ())
-    
     // make your first actors using the 'spawn' function
     let consoleWriterActor = spawn myActorSystem "consoleWriterActor" (actorOf Actors.consoleWriterActor)
-
+    // new actor to validate messages
+    let validationActor = spawn myActorSystem "validationActor" (actorOf2 (Actors.validationActor consoleWriterActor))
     // tell the consoleReader actor to begin
-    let consoleReaderActor = spawn myActorSystem "consoleReaderActor" (actorOf2 (Actors.consoleReaderActor consoleWriterActor))
-
+    let consoleReaderActor = spawn myActorSystem "consoleReaderActor" (actorOf2 (Actors.consoleReaderActor validationActor))
     consoleReaderActor <! Messages.Start
-
     myActorSystem.AwaitTermination ()
     0
     
