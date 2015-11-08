@@ -21,15 +21,20 @@ let printInstructions () =
 [<EntryPoint>]
 let main argv = 
     // initialize an actor system
-    // YOU NEED TO FILL IN HERE
-    
+    //try 
+    let myActorSystem = System.create "MyActorSystem" (Configuration.defaultConfig ())
+   
     printInstructions ()
     
     // make your first actors using the 'spawn' function
-    // YOU NEED TO FILL IN HERE
+    let consoleWriterActor = spawn myActorSystem "consoleWriterActor" (actorOf Actors.consoleWriterActor)
 
     // tell the consoleReader actor to begin
-    // YOU NEED TO FILL IN HERE
+    let consoleReaderActor = spawn myActorSystem "consoleReaderActor" (actorOf2 (Actors.consoleReaderActor consoleWriterActor))
+
+    consoleReaderActor <! Actors.Start
 
     myActorSystem.AwaitTermination ()
     0
+    // with
+    //| :? System.Configuration.ConfigurationException as cfg -> printfn "%s" cfg.Message ; 0
